@@ -21,6 +21,46 @@
 | `Inverter Phase Currents-data-as-joinbyfield-2025-10-03 17_38_30.csv` | Three phase currents | Likely in Amps; time stamps align with other logs. |
 | `Torque & Motor Speed-data-2025-10-03 18_30_00.csv` | Motor speed (RPM) | Currently zeroed; verify additional torque columns or future logs. |
 
+### Data-Cleaning Plan 
+  - Parsing & Normalization
+      - Load every CSV with UTF‑8‑SIG and drop the leading sep=, marker; centralize this logic in a load_csv() helper so
+        every file is handled consistently.
+      - Strip unit strings (e.g., Volts, Amps) from numeric columns during ingest; coerce everything to floats and log rows
+        that fail conversion.
+      - Rename verbose headers to canonical snake_case (INV_Motor_Speed, inv_dc_bus_voltage, etc.) to keep schema
+        consistent across files.
+      - Add schema validation (expected columns, ranges) before persisting cleaned tables.
+  - Timestamp Alignment
+      - Parse Time in UTC (or local if provided) and note that samples exist at sub-second resolution but are truncated
+        to seconds.
+      - Within each file, group rows by second, preserving ordering to compute aggregates:
+          - For currents/voltages: mean, min, max, and count per second to retain sub-second variability info.
+          - For temperatures: prefer median per second to reduce spike influence.
+      - Emit a consolidated 1 Hz index covering the full 63‑minute window; outer-join per-signal aggregates onto this index
+        to guarantee alignment.
+      - Store optional “sample_count” columns so downstream modeling can weigh seconds with more observations.
+  - Missing Values & Sensor Integrity
+      - Identify structured gaps (e.g., temp dropouts). Use forward-fill capped at N seconds, then spline/linear
+        interpolation only if neighboring values are within plausible deltas; otherwise leave NaN and mark for exclusion.
+      - For phase currents/voltages, treat missing values as true gaps—no interpolation, just flag the second for removal
+        or cautious imputation.
+      - Temperature anomaly checks: ensure readings stay within physical bounds (e.g., 0–120 °C); quarantine any outliers
+        for manual review.
+      - Idle DC-current stretches: keep them but tag via a is_idle boolean to help with class balancing later.
+  - Dataset Integration & Exclusions
+      - Join the three June 3 logs on the unified 1 Hz timestamp to create the main modeling table. Record provenance
+        metadata (source files, aggregation method).
+      - Exclude the May 20 torque/speed file from the core dataset until matching telemetry exists; instead, stage it
+        separately for future experiments.
+      - After merging, drop seconds missing critical targets (e.g., hotspot temp) unless imputation produced high-
+        confidence values.
+      - Save cleaned artifacts (e.g., clean/inverter_thermal_1hz.parquet) and run automated QA:
+          - Row counts vs. expected 3 324 timestamps.
+          - No NaNs in required predictor/target columns unless explicitly allowed.
+          - Summary stats to confirm ranges didn’t drift during cleaning.
+      - Document every assumption (interpolation window, unit conversions) in README_cleaning.md to keep the pipeline
+        reproducible.
+
 ### 4. System Architecture & Workflow
 1. **Data ingestion layer**: Standardize CSV parsing (strip BOM, convert units, harmonize timestamps). Output parquet/clean CSV for downstream work.
 2. **Data quality & exploratory analysis**: Visualize correlations, detect missing data, derive target labels (e.g., `temp_hotspot > threshold`).
