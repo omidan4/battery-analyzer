@@ -86,30 +86,68 @@
 
 ### 5. Milestones & Collaborative Task Breakdown
 
+| # | Name | Primary Owners | Expected Duration | Key Deliverables | Dependencies |
+|---|------|----------------|-------------------|------------------|--------------|
+| 1 | Data Audit & Infrastructure | Data Engineering | Week 1 | Standardized loaders, aggregation scripts, QA report | None |
+| 2 | Exploratory Analysis & Target Definition | Analytics | Week 2 | EDA notebook, labeling spec, data dictionary | Milestone 1 |
+| 3 | Baseline Modeling | Modeling Team A | Week 3 | Baseline models + metrics, preprocessing pipeline | Milestones 1–2 |
+| 4 | Advanced Modeling & Control Logic | Modeling Team B | Weeks 4–5 | Tuned models, interpretability artifacts, control prototype | Milestones 1–3 |
+| 5 | Integration, Validation, Reporting | Integration/QA | Week 6 | Unified CLI, test results, final report & deck | Milestones 1–4 |
+
 #### Milestone 1 – Data Audit & Infrastructure (Owner: Data Engineering)
-- Parse each CSV, remove `sep=,` lines/BOM, ensure consistent datetime format.
-- Build a notebook or script that merges datasets on timestamp.
-- Define naming conventions, folder structure (`notebooks/`, `src/`, `models/`), and environment requirements.
+- **Tasks**
+  - Finalize ingestion utilities (`src/data_loading.py`) and timestamp aggregation (`src/aggregation.py`) with unit tests.
+  - Script the merge process for June 3 logs and produce canonical artifacts (`clean/inverter_merged_1hz.csv` + parquet copy).
+  - Develop QA automation covering row counts, missing data, sensor range validation (scripts under `scripts/qa_*`).
+  - Document data-cleaning assumptions in `README_cleaning.md` and ensure reproducible commands (e.g., `PYTHONPATH=. python scripts/merge_inverter_data.py`).
+- **Acceptance Criteria**
+  - QA script reports zero duplicate timestamps and <0.1% missing rate for required fields.
+  - Clean dataset committed to repo (if allowed) or instructions to regenerate provided.
+  - Folder structure established (`src/`, `scripts/`, `notebooks/`, `clean/`, `artifacts/`) with `.gitignore` updates.
 
 #### Milestone 2 – Exploratory Analysis & Target Definition (Owner: Analytics)
-- Produce EDA notebook with plots (heatmaps, time-series overlays).
-- Establish overheating thresholds (e.g., hotspot > 60 °C) and generate binary labels.
-- Quantify class imbalance, detect missing/zeroed sensors (e.g., motor speed zeros) and document mitigation strategies.
+- **Tasks**
+  - Create a Jupyter notebook demonstrating descriptive stats, correlations, and anomaly detection on the merged dataset.
+  - Define overheating labels (e.g., `inv_hot_spot_temp_mean >= 65 °C`) and derive auxiliary targets (temperature delta over next N seconds).
+  - Quantify class balance, highlight idle vs. active periods, and flag problematic sensors (e.g., zeroed motor speed).
+  - Produce a data dictionary describing every feature/target, units, and preprocessing notes.
+- **Acceptance Criteria**
+  - Notebook checked into `notebooks/` with clear narrative and conclusions.
+  - Label-generation code lives in `src/labels.py` or similar, callable from CLI.
+  - Decision log capturing threshold choices and rationale shared with modeling teams.
 
 #### Milestone 3 – Baseline Modeling (Owner: Modeling Team A)
-- Implement baseline regression/classification using scikit-learn.
-- Create reusable preprocessing pipelines (scaling, feature selection).
-- Log baseline metrics and error analysis; identify key influential signals.
+- **Tasks**
+  - Build preprocessing pipeline (train/test split respecting time order, scaling, feature selection) using scikit-learn.
+  - Train logistic regression for classification and linear regression for temperature forecasting; capture metrics (recall, precision, MAE).
+  - Implement evaluation script (`scripts/train_baseline.py`) that saves metrics + model artifacts to `models/baseline/`.
+  - Add unit tests for feature pipelines and ensure reproducibility seeds are fixed.
+- **Acceptance Criteria**
+  - Baseline metrics meet or exceed minimal targets (e.g., ≥70% recall, ≤5 °C MAE) or gap analysis documented.
+  - Model artifacts saved with metadata (training window, features used).
+  - README section explaining how to run baseline training/evaluation end-to-end.
 
 #### Milestone 4 – Advanced Modeling & Control Logic (Owner: Modeling Team B)
-- Experiment with tree-based methods (XGBoost/LightGBM) or simple RNN if sequential context needed.
-- Introduce feature importance/SHAP analysis for interpretability.
-- Design and prototype control heuristic translating predicted risk into current derates; document algorithm and edge cases.
+- **Tasks**
+  - Experiment with gradient boosted trees (XGBoost/LightGBM/CatBoost) and temporal models (simple RNN/Temporal CNN) if justified by data.
+  - Apply hyperparameter tuning (Optuna/grid search) with proper validation splits; log experiments (e.g., MLflow).
+  - Generate interpretability outputs (feature importance charts, SHAP values) to explain overheating predictions.
+  - Translate predictions into a control heuristic that recommends current derate percentages or cooling alerts; prototype in `scripts/control_loop.py`.
+- **Acceptance Criteria**
+  - Advanced models surpass baseline targets (≥90% recall, ≤2 °C MAE) or produce clear mitigation plan if not.
+  - Control heuristic documented with pseudo-code, parameter choices, and safety constraints.
+  - Interpretability artifacts saved (plots, CSVs) and referenced in documentation.
 
-#### Milestone 5 – Integration, Validation, and Reporting (Owner: Integration)
-- Package training & inference scripts with CLI arguments.
-- Run end-to-end tests using held-out slices; verify `npm test` for any JS components if UI hooks exist.
-- Draft final report/presentation summarizing methodology, metrics, control recommendations, and future work.
+#### Milestone 5 – Integration, Validation, and Reporting (Owner: Integration/QA)
+- **Tasks**
+  - Package CLI entry points (e.g., `python scripts/predict.py --input xyz`) and, if applicable, a simple UI or dashboard.
+  - Run regression tests: training from scratch, inference on holdout data, QA on output statistics. For any JavaScript components, run `npm test` per team agreement.
+  - Compile final technical report + presentation summarizing data pipeline, models, control logic, and recommendations.
+  - Outline deployment or future work plan (data needed, monitoring strategy).
+- **Acceptance Criteria**
+  - All scripts runnable via documented commands; README updated with quick start.
+  - Validation log demonstrating clean training/inference runs plus QA sign-off.
+  - Final report/deck reviewed by stakeholders with action items captured.
 
 ### 6. Collaboration Guidelines
 - **Version control**: Separate feature branches per milestone; open PRs with linked tasks.
