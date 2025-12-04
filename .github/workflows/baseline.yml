@@ -25,6 +25,8 @@ jobs:
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
           fi
+          # Ensure core modeling deps are available even if requirements.txt is minimal
+          pip install pandas scikit-learn seaborn matplotlib joblib
 
       - name: Run baseline pipeline
         run: make baseline
