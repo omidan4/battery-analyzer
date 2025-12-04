@@ -208,3 +208,6 @@ __marimo__/
 
 # MAC Files
 .DS_Store
+
+# Folders
+./predictions/

@@ -1,48 +1,23 @@
-[
-  {
-    "train_rows": 2634,
-    "test_rows": 659,
-    "mae": 4.668640505470744,
-    "rmse": 9.269802753124445,
-    "target": "delta_T_30s",
-    "alpha": 1.0,
-    "feature_columns": [
-      "inv_control_board_temp_mean",
-      "inv_coolant_temp_mean",
-      "inv_dc_bus_current_mean",
-      "inv_dc_bus_voltage_mean",
-      "inv_gate_driver_board_temp_mean",
-      "inv_module_a_temp_mean",
-      "inv_module_b_temp_mean",
-      "inv_module_c_temp_mean",
-      "inv_phase_a_current_mean",
-      "inv_phase_b_current_mean",
-      "inv_phase_c_current_mean"
-    ],
-    "data_path": "src/notebooks/clean/inverter_labeled_1hz.csv",
-    "train_fraction": 0.8
-  },
-  {
-    "train_rows": 2634,
-    "test_rows": 659,
-    "mae": 4.668640505470744,
-    "rmse": 9.269802753124445,
-    "target": "delta_T_30s",
-    "alpha": 1.0,
-    "feature_columns": [
-      "inv_control_board_temp_mean",
-      "inv_coolant_temp_mean",
-      "inv_dc_bus_current_mean",
-      "inv_dc_bus_voltage_mean",
-      "inv_gate_driver_board_temp_mean",
-      "inv_module_a_temp_mean",
-      "inv_module_b_temp_mean",
-      "inv_module_c_temp_mean",
-      "inv_phase_a_current_mean",
-      "inv_phase_b_current_mean",
-      "inv_phase_c_current_mean"
-    ],
-    "data_path": "src/notebooks/clean/inverter_labeled_1hz.csv",
-    "train_fraction": 0.8
-  }
-]
+{
+  "train_rows": 2634,
+  "test_rows": 659,
+  "mae": 4.668640505470744,
+  "rmse": 9.269802753124445,
+  "target": "delta_T_30s",
+  "alpha": 1.0,
+  "feature_columns": [
+    "inv_control_board_temp_mean",
+    "inv_coolant_temp_mean",
+    "inv_dc_bus_current_mean",
+    "inv_dc_bus_voltage_mean",
+    "inv_gate_driver_board_temp_mean",
+    "inv_module_a_temp_mean",
+    "inv_module_b_temp_mean",
+    "inv_module_c_temp_mean",
+    "inv_phase_a_current_mean",
+    "inv_phase_b_current_mean",
+    "inv_phase_c_current_mean"
+  ],
+  "data_path": "src/notebooks/clean/inverter_labeled_1hz.csv",
+  "train_fraction": 0.8
+}

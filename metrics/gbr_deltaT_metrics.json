@@ -1,8 +1,8 @@
 {
   "task": "deltaT_regression",
   "model": "GradientBoostingRegressor",
-  "mae": 1.3452739715543696,
-  "rmse": 3.8837663194640224,
+  "mae": 1.3071484987373785,
+  "rmse": 3.869252399684471,
   "n_train": 2633,
   "n_test": 659,
   "feature_columns": [

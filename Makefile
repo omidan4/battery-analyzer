@@ -6,6 +6,9 @@ LABELED ?= src/notebooks/clean/inverter_labeled_1hz.csv
 
 baseline: data label train
 
+advanced:
+	$(PYTHONPATH) $(PYTHON) src/scripts/training/train_boosted_models.py --input $(LABELED)
+
 test:
 	$(PYTHONPATH) $(PYTHON) -m unittest discover tests
 
@@ -27,5 +30,6 @@ train:
 infer:
 	$(PYTHONPATH) $(PYTHON) src/scripts/inference/predict_overheat.py --input $(LABELED) --output predictions
 	$(PYTHONPATH) $(PYTHON) src/scripts/inference/predict_delta.py --input $(LABELED) --output predictions
+	$(PYTHONPATH) $(PYTHON) src/scripts/inference/predict_boosted.py --input $(LABELED) --output predictions/advanced
 
-.PHONY: baseline data label train infer test clean
+.PHONY: baseline data label train infer test clean advanced

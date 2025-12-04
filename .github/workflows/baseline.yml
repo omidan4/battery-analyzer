@@ -31,6 +31,9 @@ jobs:
       - name: Run baseline pipeline
         run: make baseline
 
+      - name: Train advanced models
+        run: make advanced
+
       - name: Run tests
         run: make test
 

@@ -81,9 +81,11 @@ def main() -> None:
     predictions = run_inference(args)
     if args.output:
         output_path = Path(args.output)
-        if output_path.is_dir():
+        if output_path.is_dir() or output_path.suffix == "":
+            output_path.mkdir(parents=True, exist_ok=True)
             output_path = output_path / "delta_predictions.csv"
-        output_path.parent.mkdir(parents=True, exist_ok=True)
+        else:
+            output_path.parent.mkdir(parents=True, exist_ok=True)
         predictions.to_csv(output_path, index=False)
         print(f"Wrote delta predictions to {output_path}")
     else:

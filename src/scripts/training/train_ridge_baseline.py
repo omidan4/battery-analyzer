@@ -60,15 +60,7 @@ def build_features(df: pd.DataFrame):
 
 def save_metrics(path: Path, metrics: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    if path.exists():
-        try:
-            history = json.loads(path.read_text())
-        except json.JSONDecodeError:
-            history = []
-    else:
-        history = []
-    history.append(metrics)
-    path.write_text(json.dumps(history, indent=2, default=str))
+    path.write_text(json.dumps(metrics, indent=2, default=str))
 
 
 def main() -> None:
