@@ -6,13 +6,15 @@ Early warning system for inverter overheating and power-delivery anomalies. We i
 - `src/`
   - `data_loading.py` – CSV ingestion utilities (handles BOM, `sep=,`, unit stripping, canonical names).
   - `aggregation.py` – Timestamp parsing + 1 Hz aggregation helpers.
-  - `scripts/` – CLI tools:
+  - `scripts/data/`
     - `merge_inverter_data.py` – Builds unified per-second dataset from June 3 logs.
     - `qa_merged_data.py` – Quality checks (row counts, missing data, ranges).
     - `validate_data_loading.py` – Confirms loader/aggregation on current `data/` contents.
+  - `scripts/training/`
     - `train_logreg_baseline.py` – Fits and persists the logistic overheating baseline.
-    - `predict_overheat.py` – Loads the persisted logistic baseline and emits timestamped probabilities/labels.
     - `train_ridge_baseline.py` – Fits and persists the ridge delta-T baseline.
+  - `scripts/inference/`
+    - `predict_overheat.py` – Loads the persisted logistic baseline and emits timestamped probabilities/labels.
     - `predict_delta.py` – Runs inference for the ridge baseline.
   - `labels.py` – Generates `overheat_label` and 30s delta targets.
   - `notebooks/` – Analysis artifacts:
@@ -44,12 +46,12 @@ Refer to `DESIGN.md` §5 for detailed tasks, owners, and acceptance criteria per
    ```
 2. Regenerate merged dataset:
    ```bash
-   python src/scripts/merge_inverter_data.py --output src/notebooks/clean/inverter_merged_1hz.csv
+   python src/scripts/data/merge_inverter_data.py --output src/notebooks/clean/inverter_merged_1hz.csv
    ```
 3. Label data + QA:
    ```bash
    python src/labels.py  # writes src/notebooks/clean/inverter_labeled_1hz.csv
-   python src/scripts/qa_merged_data.py --input src/notebooks/clean/inverter_merged_1hz.csv
+   python src/scripts/data/qa_merged_data.py --input src/notebooks/clean/inverter_merged_1hz.csv
    ```
 4. Execute tests:
    ```bash
@@ -57,13 +59,13 @@ Refer to `DESIGN.md` §5 for detailed tasks, owners, and acceptance criteria per
    ```
 5. Train/persist baselines:
    ```bash
-   PYTHONPATH=. python src/scripts/train_logreg_baseline.py
-   PYTHONPATH=. python src/scripts/train_ridge_baseline.py
+   PYTHONPATH=. python src/scripts/training/train_logreg_baseline.py
+   PYTHONPATH=. python src/scripts/training/train_ridge_baseline.py
    ```
 6. Run inference with persisted artifacts:
    ```bash
-   PYTHONPATH=. python src/scripts/predict_overheat.py --output predictions
-   PYTHONPATH=. python src/scripts/predict_delta.py --output predictions
+   PYTHONPATH=. python src/scripts/inference/predict_overheat.py --output predictions
+   PYTHONPATH=. python src/scripts/inference/predict_delta.py --output predictions
    ```
 
 ### Current Status & Next Steps
