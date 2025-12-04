@@ -56,5 +56,63 @@
     "data_path": "src/notebooks/clean/inverter_labeled_1hz.csv",
     "train_fraction": 0.8,
     "notes": "StandardScaler + LogisticRegression(class_weight='balanced')"
+  },
+  {
+    "train_rows": 2658,
+    "test_rows": 665,
+    "roc_auc": 0.9937509887676,
+    "confusion_matrix": [
+      [
+        516,
+        86
+      ],
+      [
+        1,
+        62
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.9980657640232108,
+        "recall": 0.8571428571428571,
+        "f1-score": 0.9222520107238605,
+        "support": 602.0
+      },
+      "1": {
+        "precision": 0.4189189189189189,
+        "recall": 0.9841269841269841,
+        "f1-score": 0.5876777251184834,
+        "support": 63.0
+      },
+      "accuracy": 0.869172932330827,
+      "macro avg": {
+        "precision": 0.7084923414710649,
+        "recall": 0.9206349206349206,
+        "f1-score": 0.754964867921172,
+        "support": 665.0
+      },
+      "weighted avg": {
+        "precision": 0.9431992208028042,
+        "recall": 0.869172932330827,
+        "f1-score": 0.8905554994559827,
+        "support": 665.0
+      }
+    },
+    "feature_columns": [
+      "inv_control_board_temp_mean",
+      "inv_coolant_temp_mean",
+      "inv_dc_bus_current_mean",
+      "inv_dc_bus_voltage_mean",
+      "inv_gate_driver_board_temp_mean",
+      "inv_module_a_temp_mean",
+      "inv_module_b_temp_mean",
+      "inv_module_c_temp_mean",
+      "inv_phase_a_current_mean",
+      "inv_phase_b_current_mean",
+      "inv_phase_c_current_mean"
+    ],
+    "data_path": "src/notebooks/clean/inverter_labeled_1hz.csv",
+    "train_fraction": 0.8,
+    "notes": "StandardScaler + LogisticRegression(class_weight='balanced')"
   }
 ]
