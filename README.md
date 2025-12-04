@@ -10,7 +10,10 @@ Early warning system for inverter overheating and power-delivery anomalies. We i
     - `merge_inverter_data.py` – Builds unified per-second dataset from June 3 logs.
     - `qa_merged_data.py` – Quality checks (row counts, missing data, ranges).
     - `validate_data_loading.py` – Confirms loader/aggregation on current `data/` contents.
+    - `train_logreg_baseline.py` – Fits and persists the logistic overheating baseline.
     - `predict_overheat.py` – Loads the persisted logistic baseline and emits timestamped probabilities/labels.
+    - `train_ridge_baseline.py` – Fits and persists the ridge delta-T baseline.
+    - `predict_delta.py` – Runs inference for the ridge baseline.
   - `labels.py` – Generates `overheat_label` and 30s delta targets.
   - `notebooks/` – Analysis artifacts:
     - `01_eda_template.ipynb` – Full exploratory analysis, sensor QA, rolling features, charting.
@@ -52,17 +55,19 @@ Refer to `DESIGN.md` §5 for detailed tasks, owners, and acceptance criteria per
    ```bash
    python -m unittest discover tests
    ```
-5. Train/persist logistic baseline:
+5. Train/persist baselines:
    ```bash
-   PYTHONPATH=. python src/scripts/train_logreg_baseline.py  # (if added) or rerun notebook logic
+   PYTHONPATH=. python src/scripts/train_logreg_baseline.py
+   PYTHONPATH=. python src/scripts/train_ridge_baseline.py
    ```
-6. Run inference with persisted artifact:
+6. Run inference with persisted artifacts:
    ```bash
    PYTHONPATH=. python src/scripts/predict_overheat.py --output predictions
+   PYTHONPATH=. python src/scripts/predict_delta.py --output predictions
    ```
 
 ### Current Status & Next Steps
 - ✅ Milestone 1: ingestion, aggregation, QA, initial scripts/tests.
 - ✅ Milestone 2: EDA notebook, labels, class-balance report, data dictionary.
-- ✅ Milestone 3 (baseline phase): logistic & ridge baselines documented in notebooks; logistic model persisted (`models/baseline/logreg_overheat.joblib`) with CLI inference (`src/scripts/predict_overheat.py`).
+- ✅ Milestone 3 (baseline phase): logistic & ridge baselines documented in notebooks; both models have training CLIs and persisted artifacts (`models/baseline/logreg_overheat.joblib`, `models/baseline/ridge_deltaT.joblib`) plus inference tools.
 - 🔜 Add ridge-regression persistence/inference and automated training script for reproducibility.
