@@ -1,0 +1,25 @@
+{
+  "task": "overheat_classification",
+  "model": "GradientBoostingClassifier",
+  "auc": 0.999467348460637,
+  "f1": 0.96875,
+  "n_train": 2633,
+  "n_test": 659,
+  "feature_columns": [
+    "inv_control_board_temp_mean",
+    "inv_coolant_temp_mean",
+    "inv_dc_bus_current_mean",
+    "inv_dc_bus_voltage_mean",
+    "inv_gate_driver_board_temp_mean",
+    "inv_module_a_temp_mean",
+    "inv_module_b_temp_mean",
+    "inv_module_c_temp_mean",
+    "inv_phase_a_current_mean",
+    "inv_phase_b_current_mean",
+    "inv_phase_c_current_mean",
+    "inv_hot_spot_temp_mean_prev",
+    "delta_T_30s_prev",
+    "power_mean",
+    "power_mean_roll_5s"
+  ]
+}
